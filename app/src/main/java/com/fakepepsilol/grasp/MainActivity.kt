@@ -18,8 +18,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var config: Config
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +41,6 @@ class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Launch a coroutine to preload config values
         CoroutineScope(Dispatchers.Default).launch()
         {
             config.preload()

@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,13 +35,11 @@ class Config @Inject constructor(
             }
         }
 
-    fun preload() {
+    suspend fun preload() {
         Log.i("fpllog", "preload")
-        runBlocking {
-            counter = context.dataStore.data.map { prefs ->
-                prefs[KEY_COUNT] ?: 0
-            }.first()
-        }
+        counter = context.dataStore.data.map { prefs ->
+            prefs[KEY_COUNT] ?: 0
+        }.first()
         Log.i("fpllog", "counter: ${counter}")
     }
 
