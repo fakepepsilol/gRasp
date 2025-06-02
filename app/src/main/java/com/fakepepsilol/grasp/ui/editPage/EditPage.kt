@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,13 +18,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.fakepepsilol.grasp.ui.Pages
 
 @Preview
 @Composable
-fun EditPagePreview() {
+private fun EditPagePreview() {
     EditPage(true)
 }
 
@@ -32,10 +35,20 @@ fun EditPagePreview() {
 fun EditPage(preview: Boolean = false) {
 
 
-//    val viewModel: EditViewModel = hiltViewModel()
-//    val entries: MutableList<String> = viewModel.entries
-    val entries: MutableList<String> = mutableListOf("asd", "123")
-    //@Suppress("unused")
+    val viewModel: EditViewModel? = if (!preview) {
+        hiltViewModel()
+    } else {
+        null
+    }
+
+
+    val isPreview: Boolean = viewModel == null
+    val preview_entries: MutableList<String> = mutableListOf(
+        "https://raspored.rs/pub/?pid=tzb",
+        "https://raspored.rs/pub/?pid=el0")
+    val context = LocalContext.current
+
+    @Suppress("unused_variable")
     val page = Pages.Edit
     Box(
         modifier = Modifier
@@ -46,13 +59,14 @@ fun EditPage(preview: Boolean = false) {
         ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val entries = if (isPreview) preview_entries else viewModel.config.urls
             entries.forEach {
                 Box(
                     modifier = Modifier
-                        .width(150.dp)
+                        .fillMaxWidth()
                         .height(30.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -63,27 +77,17 @@ fun EditPage(preview: Boolean = false) {
                     )
                 }
             }
-//            Text(
-//                text = "This is the ${page.label} Page",
-//                style = MaterialTheme.typography.bodyLarge,
-//                color = MaterialTheme.colorScheme.onBackground
-//            )
-//            Icon(
-//                modifier = Modifier
-//                    .size(128.dp),
-//                imageVector = page.selectedIcon,
-//                tint = MaterialTheme.colorScheme.primary,
-//                contentDescription = null,
-//            )
+            Spacer(modifier = Modifier.height(16.dp))
+            FloatingActionButton(
+                onClick = {
+                    if (!isPreview) {
+                        viewModel.addEntry("new entry", context)
+                    }
+                },
 
-        }
-        FloatingActionButton(
-            onClick = {
-                entries.add("new item")
-            },
-
-            ) {
-            Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                ) {
+                Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+            }
         }
     }
 }

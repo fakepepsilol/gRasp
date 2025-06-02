@@ -43,7 +43,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -162,7 +164,7 @@ fun NavDrawer(
                         brush = Brush.horizontalGradient(
                             colorStops = arrayOf(
                                 0f to MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 1f * percentOpen),
-                                0.2f to MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 1f * percentOpen),
+                                0.2f to Color.Black.copy(alpha = 0.5f * percentOpen),
                                 .65f to MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0f)
                             )
                         )
@@ -198,7 +200,7 @@ fun NavDrawer(
 fun NavigationDrawerContents(currentPage: Pages, onPageSelected: (Pages) -> Unit) {
     ModalDrawerSheet(
         modifier = Modifier
-            .width(300.dp)
+            .width(300.dp),
     ) {
         HorizontalDivider()
         Text(
@@ -283,7 +285,7 @@ fun HomePagePreview() {
 @Preview
 @Composable
 fun EditPagePreview() {
-    EditPage()
+    EditPage(true)
 }
 
 @Preview

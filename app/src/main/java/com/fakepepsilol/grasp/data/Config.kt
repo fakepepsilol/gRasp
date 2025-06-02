@@ -2,8 +2,10 @@ package com.fakepepsilol.grasp.data
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.Module
 import dagger.Provides
@@ -25,7 +27,7 @@ private val Context.dataStore by preferencesDataStore(name = "config")
 class Config @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-
+    val TAG: String = "fpl->Config"
 
     var counter: Int = 0
         set(value) {
@@ -35,25 +37,31 @@ class Config @Inject constructor(
             }
         }
 
+    var urls: ObservableList<String> = ObservableList(onChange = {
+        
+    })
+
+
     suspend fun preload() {
-        Log.i("fpllog", "preload")
+        Log.d(TAG, "preload")
         counter = context.dataStore.data.map { prefs ->
-            prefs[KEY_COUNT] ?: 0
+            prefs[I_COUNTER] ?: 0
         }.first()
-        Log.i("fpllog", "counter: ${counter}")
+        Log.i(TAG, "counter: ${counter}") // TODO: remove
     }
 
     companion object {
-        val KEY_COUNT = intPreferencesKey("counter")
+        val I_COUNTER = intPreferencesKey("counter")
+        val L_URLS = stringPreferencesKey("urls")
     }
 
     val count: Flow<Int> = context.dataStore.data.map { prefs ->
-        prefs[KEY_COUNT] ?: 0
+        prefs[I_COUNTER] ?: 0
     }
 
     suspend fun saveCounter() {
         context.dataStore.edit {
-            it[KEY_COUNT] = counter
+            it[I_COUNTER] = counter
         }
     }
 }
