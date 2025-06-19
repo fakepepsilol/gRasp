@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android") version "2.56.2"
 
+    kotlin("plugin.serialization") version "2.1.21"
 }
 
 android {
@@ -63,9 +64,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
+    implementation(libs.kotlinx.serialization.json)
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+
+    implementation(libs.androidx.animation)
 }
 hilt {
     enableAggregatingTask = false

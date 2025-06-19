@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 import com.fakepepsilol.grasp.data.Config
+import com.fakepepsilol.grasp.data.UrlEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @HiltViewModel
@@ -18,14 +19,24 @@ class EditViewModel @Inject constructor(
     val config: Config
 ) : ViewModel() {
     val TAG = "fpl->EditViewModel"
-    val entries: MutableList<String> = mutableStateListOf()
+    //val entries: MutableList<String> = mutableStateListOf()
 
     fun addEntry(newEntry: String, context: Context) {
-        config.urls.add("newurl")
-//        if (entries.count() >= 10) {
-//            Toast.makeText(context, "Maximum number of entries reached.", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-//        entries.add(newEntry)
+        config.urls.add(UrlEntry("item number ${config.urls.size}", maxId + 1))
+        maxId++
+    }
+
+    var maxId: Int = 0
+
+    init {
+        for (entry in config.urls) {
+            if (entry.id > maxId) {
+                maxId = entry.id
+            }
+        }
+    }
+
+    fun removeEntryAt(index: Int) {
+        config.urls.removeAt(index)
     }
 }
