@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.Module
@@ -17,9 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,32 +30,29 @@ class Config @Inject constructor(
     val TAG: String = "fpl->Config"
 
     ////////////////////////////////////////////////////////////////////
-    var counter: Int = 0
+//    var counter: Int = 0
+//        set(value) {
+//            field = value
+//            CoroutineScope(Dispatchers.IO).launch {
+//                saveInt(I_COUNTER, counter)
+//            }
+//        }
+    private var urls_serialized: String = ""
         set(value) {
             field = value
             CoroutineScope(Dispatchers.IO).launch {
-                saveInt(I_COUNTER, counter)
-            }
-        }
-    private var _urls_serialized: String = ""
-        set(value) {
-            field = value
-            CoroutineScope(Dispatchers.IO).launch {
-                saveString(L_URLS, _urls_serialized)
+                saveString(L_URLS, urls_serialized)
             }
         }
 
     var urls: ObservableList<UrlEntry> = ObservableList(onChange = {
-        _urls_serialized = Json.encodeToString(ObservableListSerializer, urls)
+        urls_serialized = Json.encodeToString(ObservableListSerializer, urls)
     })
 
     ////////////////////////////////////////////////////////////////////
 
     suspend fun preload() {
         Log.d(TAG, "preload")
-        counter = context.dataStore.data.map { prefs ->
-            prefs[I_COUNTER] ?: 0
-        }.first()
         val items = Json.decodeFromString(
             ObservableListSerializer,
             context.dataStore.data.map { prefs -> prefs[L_URLS] ?: "[]" }.first()
@@ -73,11 +67,11 @@ class Config @Inject constructor(
 
 
     companion object {
-        val I_COUNTER = intPreferencesKey("counter")
+        //        val I_COUNTER = intPreferencesKey("counter")
         val L_URLS = stringPreferencesKey("urls")
     }
 
-
+    @Suppress("unused")
     suspend fun saveInt(key: Preferences.Key<Int>, value: Int) {
         Log.d(TAG, "Saving: $key -> $value")
         context.dataStore.edit {

@@ -2,27 +2,27 @@ package com.fakepepsilol.grasp.ui.editPage
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-
 import com.fakepepsilol.grasp.data.Config
 import com.fakepepsilol.grasp.data.UrlEntry
-import kotlinx.coroutines.flow.MutableStateFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import java.time.LocalDateTime
+import javax.inject.Inject
 
 @HiltViewModel
 class EditViewModel @Inject constructor(
     @Suppress("unused_variable")
     val config: Config
 ) : ViewModel() {
+
+
+    @Suppress("PropertyName", "unused")
     val TAG = "fpl->EditViewModel"
     //val entries: MutableList<String> = mutableStateListOf()
 
-    fun addEntry(newEntry: String, context: Context) {
-        config.urls.add(UrlEntry("item number ${config.urls.size}", maxId + 1))
+    fun addEntry(url: String) {
+        config.urls.add(UrlEntry(url, maxId + 1))
         maxId++
     }
 
@@ -38,5 +38,15 @@ class EditViewModel @Inject constructor(
 
     fun removeEntryAt(index: Int) {
         config.urls.removeAt(index)
+    }
+
+    suspend fun check(
+        url: String,
+        onStart: () -> Unit = {},
+        onEnd: () -> Unit = {},
+    ) {
+        Log.d(TAG, "beginning check with url: $url")
+        onStart()
+        onEnd()
     }
 }
