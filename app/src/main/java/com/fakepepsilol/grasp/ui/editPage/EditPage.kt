@@ -35,6 +35,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -145,6 +146,8 @@ fun EditPage(preview: Boolean = false) {
                 items = entries,
                 key = { _, item -> item.id },
             ) { index, item ->
+                if (index != 0)
+                    HorizontalDivider(Modifier.padding(vertical = 4.dp))
                 Entry(
                     Modifier.animateItem(fadeInSpec = tween(350)),
                     item = item,
@@ -347,13 +350,18 @@ fun Entry(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(40.dp),
+            .height(40.dp)
+            .padding(horizontal = 12.dp),
         contentAlignment = Alignment.Center
     ) {
         Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier
+                    .weight(1f),
                 text = item.url,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
