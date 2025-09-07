@@ -118,7 +118,7 @@ fun EditPage(preview: Boolean = false) {
         )
     }
 
-    val listState = rememberLazyListState()
+//    val listState = rememberLazyListState()
     @Suppress("unused_variable")
     Box(
         modifier = Modifier
@@ -133,7 +133,6 @@ fun EditPage(preview: Boolean = false) {
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            state = listState
         ) {
             item {
                 Spacer(

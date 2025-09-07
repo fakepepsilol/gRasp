@@ -43,14 +43,19 @@ class ObservableList<T>(
 @Serializable
 data class UrlEntry(
 
-    val url: String = "",
+    override val name: String,
+    val url: String,
 
     @kotlinx.serialization.Transient
-    var id: Int = 0,
+    override var id: Int = 0,
 
     @Serializable(with = LocalDateTimeSerializer::class)
     var lastCheck: LocalDateTime = LocalDateTime.now(),
 
     @Serializable(with = LocalDateTimeSerializer::class)
     var lastChange: LocalDateTime = LocalDateTime.now(),
-)
+) : Entry
+interface Entry{
+    val name: String
+    val id: Int
+}

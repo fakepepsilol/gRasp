@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
@@ -43,7 +45,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.fakepepsilol.grasp.ui.debugPage.DebugPage
 import com.fakepepsilol.grasp.ui.editPage.EditPage
 import com.fakepepsilol.grasp.ui.homePage.HomePage
 import com.fakepepsilol.grasp.ui.settingsPage.SettingsPage
@@ -66,23 +69,33 @@ import kotlin.coroutines.cancellation.CancellationException
 
 enum class Pages(
     val label: String,
+    val contents: @Composable () -> Unit,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
     Home(
         label = "Home",
+        contents = { HomePage() },
         selectedIcon = Icons.Default.Home,
         unselectedIcon = Icons.Outlined.Home
     ),
     Edit(
         label = "Edit",
+        contents = { EditPage() },
         selectedIcon = Icons.Default.Edit,
         unselectedIcon = Icons.Outlined.Edit
     ),
     Settings(
         label = "Settings",
+        contents = { SettingsPage() },
         selectedIcon = Icons.Default.Settings,
         unselectedIcon = Icons.Outlined.Settings
+    ),
+    Debug(
+        label = "Debug Menu",
+        contents = { DebugPage() },
+        selectedIcon = Icons.Default.Build,
+        unselectedIcon = Icons.Outlined.Build
     )
 }
 
@@ -100,11 +113,7 @@ fun Main() {
     var currentPage: Pages by rememberSaveable { mutableStateOf(Pages.Home) }
 
 
-    when (currentPage) {
-        Pages.Home -> HomePage()
-        Pages.Edit -> EditPage()
-        Pages.Settings -> SettingsPage()
-    }
+    currentPage.contents()
     NavDrawer(drawerState, scope, currentPage) { selectPage ->
         currentPage = selectPage
         scope.launch {
@@ -122,6 +131,9 @@ fun NavDrawer(
     onPageSelected: (Pages) -> Unit
 ) {
     DismissibleNavigationDrawer(
+        modifier = Modifier.focusProperties{
+            canFocus = drawerState.isOpen
+        },
         drawerState = drawerState,
         drawerContent = {
             NavigationDrawerContents(currentPage, onPageSelected)

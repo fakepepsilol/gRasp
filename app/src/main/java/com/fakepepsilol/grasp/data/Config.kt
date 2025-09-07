@@ -30,13 +30,7 @@ class Config @Inject constructor(
     val TAG: String = "fpl->Config"
 
     ////////////////////////////////////////////////////////////////////
-//    var counter: Int = 0
-//        set(value) {
-//            field = value
-//            CoroutineScope(Dispatchers.IO).launch {
-//                saveInt(I_COUNTER, counter)
-//            }
-//        }
+
     private var urls_serialized: String = ""
         set(value) {
             field = value
