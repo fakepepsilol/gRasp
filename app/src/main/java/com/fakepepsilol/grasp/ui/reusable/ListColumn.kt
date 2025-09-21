@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -108,8 +110,9 @@ fun <T : Entry> ListColumn(
                     modifier = Modifier
                         .width(48.dp)
                         .height(40.dp)
+                        .clip(RoundedCornerShape(16.dp))
                         .clickable(onClick = {items.remove(item)}),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ){
                     Icon(
                         modifier = Modifier.size(24.dp),
