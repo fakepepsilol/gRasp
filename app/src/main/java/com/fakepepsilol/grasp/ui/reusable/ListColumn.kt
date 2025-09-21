@@ -5,18 +5,20 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,15 +34,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.fakepepsilol.grasp.data.Entry
 import com.fakepepsilol.grasp.data.ObservableList
-
 
 
 @Suppress("unused")
@@ -58,7 +57,7 @@ fun <T : Entry> ListColumn(
     buttonColor: Color = MaterialTheme.colorScheme.onBackground,
     buttonIcon: ImageVector = Icons.Default.Delete,
     ){
-    val tag: String = "LazyColumn"
+    val tag = "LazyColumn"
 
     var itemHeight by remember { mutableStateOf(itemHeight) }
     var updatedItemHeight by remember { mutableStateOf(false) }
@@ -79,19 +78,19 @@ fun <T : Entry> ListColumn(
         modifier = Modifier
             .height(lazyColumnHeight)
             .then(lazyColumnModifier),
-        contentPadding = PaddingValues(contentPadding)
+        contentPadding = PaddingValues(contentPadding),
     ){
         items(items = items, key = {item -> item.id}){ item ->
             Row(
                 modifier = Modifier
                     .animateItem(placementSpec = placementAnimation)
+                    .fillMaxSize()
                     .then(
                         if(item == items.firstOrNull()){
                         Modifier.onGloballyPositioned{ pos ->
                             if(!updatedItemHeight) {
                                 itemHeight = (pos.size.height / density).dp
                                 Log.d(tag, "recalculated itemHeight: $itemHeight")
-//                                Log.d(TAG, "${item.id}")
                                 updatedItemHeight = true
                             }
                         }} else Modifier),
@@ -100,22 +99,27 @@ fun <T : Entry> ListColumn(
             ){
                 Text(
                     modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
+                        .weight(1f),
                     style = textStyle,
                     color = textColor,
                     textAlign = TextAlign.Center,
                     text = item.name)
-                IconButton(
-                    modifier = Modifier.width(48.dp),
-                    onClick = {items.remove(item)},
-                    content = {
-                        Icon(
-                            tint = buttonColor,
-                            imageVector = buttonIcon,
-                            contentDescription = null)
-                    }
-                )
+                Box(
+                    modifier = Modifier
+                        .width(48.dp)
+                        .height(40.dp)
+                        .clickable(onClick = {items.remove(item)}),
+                    contentAlignment = Alignment.Center
+                ){
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        tint = buttonColor,
+                        imageVector = buttonIcon,
+                        contentDescription = null)
+                }
+
+
+
             }
         }
     }
