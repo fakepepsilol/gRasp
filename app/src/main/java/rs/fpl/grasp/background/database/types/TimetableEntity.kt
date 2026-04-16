@@ -1,8 +1,10 @@
 package rs.fpl.grasp.background.database.types
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.setValue
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -13,12 +15,12 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Entity(tableName = "timetables")
-data class TimetableEntity(
+data class TimetableEntity (
     @PrimaryKey @ColumnInfo(name = "url") val url: String,
     @ColumnInfo(name = "timetableJson") val json: String,
-    @ColumnInfo(name = "nickname") val nickname: String? = null,
-    @ColumnInfo(name = "lastChange") val lastChange: Instant,
-    @ColumnInfo(name = "lastCheck") val lastCheck: Instant,
+    @ColumnInfo(name = "nickname") val dbNickname: String? = null,
+    @ColumnInfo(name = "lastChange") val dbLastChange: Instant,
+    @ColumnInfo(name = "lastCheck") val dbLastCheck: Instant,
 ) {
     val timetable: Timetable by lazy {
         Json.decodeFromString(json)
@@ -26,6 +28,9 @@ data class TimetableEntity(
     val id: String by lazy {
         UrlProcessor.getId(url)
     }
+    var nickname: String? by mutableStateOf(dbNickname)
+    var lastChange: Instant by mutableStateOf(dbLastChange)
+    var lastCheck: Instant by mutableStateOf(dbLastCheck)
 
     companion object {
         fun build(url: String, json: String, nickname: String? = null): TimetableEntity {
@@ -52,9 +57,9 @@ data class TimetableEntity(
                         TimetableEntity(
                             url = it["url"] as String,
                             json = it["json"] as String,
-                            nickname = it["nickname"] as String?,
-                            lastChange = Instant.fromEpochMilliseconds(it["lastChange"] as Long),
-                            lastCheck = Instant.fromEpochMilliseconds(it["lastCheck"] as Long)
+                            dbNickname = it["nickname"] as String?,
+                            dbLastChange = Instant.fromEpochMilliseconds(it["lastChange"] as Long),
+                            dbLastCheck = Instant.fromEpochMilliseconds(it["lastCheck"] as Long)
                         )
                     )
                 }

@@ -239,14 +239,8 @@ private fun EditTimetableDialog(
                 }
             } else {
                 entity?.let {
-                    TimetableManager.saveTimetable(
-                        TimetableEntity.build(
-                            entity.url,
-                            entity.json,
-                            timetableNicknameState.text.toString()
-                                .takeUnless { it.isBlank() }
-                        )
-                    )
+                    entity.nickname = timetableNicknameState.text.toString().takeUnless { it.isBlank() }
+                    TimetableManager.saveTimetable(entity)
                     onCloseRequest()
                 }
             }

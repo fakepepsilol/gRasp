@@ -1,5 +1,6 @@
 package rs.fpl.grasp.ui.pages.main.types
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
@@ -54,6 +55,13 @@ class Bell {
                     .toInstant(timeZone)
                 return targetTime - now
             }
+        fun contains(now: LocalDateTime): Boolean = contains(now.hour, now.minute, now.second)
+        fun contains(hour: Int, minute: Int, second: Int): Boolean {
+            val startsAt = startHour * 3600 + startMinute * 60
+            val endsAt = endHour * 3600 + endMinute * 60
+            val now = hour * 3600 + minute * 60 + second
+            return now in (startsAt until endsAt)
+        }
 
         companion object {
             /**

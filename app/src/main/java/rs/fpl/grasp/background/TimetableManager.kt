@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import rs.fpl.grasp.background.database.GraspDatabase
 import rs.fpl.grasp.background.database.types.TimetableEntity
+import rs.fpl.grasp.background.service.ServiceManager
 
 object TimetableManager {
     val timetables: SnapshotStateList<TimetableEntity> = mutableStateListOf()
@@ -32,6 +33,7 @@ object TimetableManager {
             scope.launch {
                 GraspDatabase.getInstance()?.timetableDao()?.deleteById(id)
             }
+            setPrimary(timetables.firstOrNull())
             return true
         }
     }
@@ -56,12 +58,13 @@ object TimetableManager {
 
     fun getPrimary(): TimetableEntity? =
         primaryTimetableId?.let { id ->
-            timetables.first { it.id == id }
+            timetables.firstOrNull { it.id == id }
         }
-    fun setPrimary(entity: TimetableEntity) {
-        primaryTimetableId = entity.id
+    fun setPrimary(entity: TimetableEntity?) {
+        primaryTimetableId = entity?.id
         scope.launch {
-            GraspDatabase.getInstance()?.configDao()?.setPrimaryTimetableId(entity.id)
+            GraspDatabase.getInstance()?.configDao()?.setPrimaryTimetableId(entity?.id)
         }
+        ServiceManager.setTimetable(entity)
     }
 }

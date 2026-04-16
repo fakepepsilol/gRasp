@@ -1,10 +1,15 @@
 package rs.fpl.grasp.ui.pages.main.types
 
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonNames
 import java.util.Dictionary
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -23,6 +28,29 @@ class General constructor(
     @JsonNames("clIndex") val classIndexVisible: Boolean,
 ) {
     val classNames: List<String> = _rbr.split(',')
+
     @Transient
     val bells: List<Bell> = _bells.map { Bell(it) }
+
+    private fun getCurrentClassBellIndex(now: LocalDateTime): Int {
+        return bells.indexOfFirst { bell ->
+            bell.durations.filterNotNull().any { it.contains(now) }
+        }
+    }
+
+    fun getCurrentClassBell(
+        now: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    ): Bell? {
+        val index = getCurrentClassBellIndex(now)
+        if(index == -1) return null
+        return bells[index]
+    }
+
+    fun getNextClassBell(
+        now: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+    ): Bell? {
+        val index = getCurrentClassBellIndex(now)
+        if(index == -1 || (index + 1) > bells.lastIndex) return null
+        return bells[index + 1]
+    }
 }

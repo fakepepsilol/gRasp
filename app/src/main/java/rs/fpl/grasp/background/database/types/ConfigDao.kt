@@ -29,7 +29,7 @@ interface ConfigDao {
     suspend fun getPrimaryTimetableId(): String?
 
     @Query("UPDATE config SET primaryTimetableId = :id")
-    suspend fun setPrimaryTimetableId(id: String)
+    suspend fun setPrimaryTimetableId(id: String?)
 
     @Query("DELETE FROM config")
     fun deleteConfig()
