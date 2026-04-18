@@ -49,8 +49,12 @@ class General constructor(
     fun getNextClassBell(
         now: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     ): Bell? {
-        val index = getCurrentClassBellIndex(now)
-        if(index == -1 || (index + 1) > bells.lastIndex) return null
-        return bells[index + 1]
+        val rightNow = now.hour * 3600 + now.minute * 60 + now.second
+        return bells.firstOrNull { bell ->
+            bell.durations.filterNotNull().any { duration ->
+                val startsAt = duration.startHour * 3600 + duration.startMinute * 60
+                startsAt > rightNow
+            }
+        }
     }
 }
